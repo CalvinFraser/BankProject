@@ -21,10 +21,11 @@ namespace DataBaseServer
 
         public void GetValuesForEntry(int index, out uint acctNo, out uint pin, out int bal, out string fName, out string lName, out Bitmap icon)
         {
-            if(index < 0 || index > dataBase.GetNumRecords() )
+            if(index < 0 || index >= dataBase.GetNumRecords() )
             {
                 Console.WriteLine("ERROR: ACCESS ERROR: CLIENT ATTEMPTED TO ACCESS INDEX THAT IS OUT OF RANGE.");
-                throw new ArgumentOutOfRangeException( "Index index is out of range.");
+
+                throw new FaultException<IndexOutOfRangeFault>(new IndexOutOfRangeFault() { Issue = "Client accessed index out of range" });
             }
             Console.WriteLine("Obtaining data...");
 

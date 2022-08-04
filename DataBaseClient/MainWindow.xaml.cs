@@ -71,9 +71,9 @@ namespace DataBaseClient
                 icon.Dispose();
 
             }
-            catch(FaultException<IndexOutOfRangeException> exception)
+            catch(FaultException<IndexOutOfRangeFault> exception)
             {
-                MessageBox.Show(exception.Detail.Message);
+                MessageBox.Show(exception.Detail.Issue);
             }
         }
 
