@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataBaseServer", "DataBaseS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataBaseServerInterface", "DataBaseServerInterface\DataBaseServerInterface.csproj", "{DB00A9C3-4139-4615-8C1B-E51B1C952011}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessServer", "BusinessServer\BusinessServer.csproj", "{BE800C81-255C-4EA9-8AA6-6F001D2ACE1E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{DB00A9C3-4139-4615-8C1B-E51B1C952011}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DB00A9C3-4139-4615-8C1B-E51B1C952011}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DB00A9C3-4139-4615-8C1B-E51B1C952011}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE800C81-255C-4EA9-8AA6-6F001D2ACE1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE800C81-255C-4EA9-8AA6-6F001D2ACE1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE800C81-255C-4EA9-8AA6-6F001D2ACE1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE800C81-255C-4EA9-8AA6-6F001D2ACE1E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
