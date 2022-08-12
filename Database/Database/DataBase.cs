@@ -21,7 +21,7 @@ namespace DatabaseLib
         {
             dataStructs = new List<DataStruct>();
             var Datagen = new DatabaseGen();
-            int toGenerate = Datagen.numberOfAccounts();
+            int toGenerate = 100000; 
             for(int i = 0; i < toGenerate; i++)
             {
                 DataStruct tmp = new DataStruct();

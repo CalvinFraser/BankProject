@@ -20,7 +20,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.ServiceModel;
-using DataBaseServerInterface;
+using BusinessServerInterface;
 using System.Drawing;
 using System.Windows.Interop;
 
@@ -31,18 +31,18 @@ namespace DataBaseClient
     /// </summary>
     public partial class MainWindow : Window
     {
-        private DataBaseServerInterface.DataBaseServerInterface channel;
+        private BusinessServerInterface.BusinessServerInterface channel;
         private int index = 0;
         public MainWindow()
         {
             InitializeComponent();
 
-            ChannelFactory<DataBaseServerInterface.DataBaseServerInterface> channelFactory;
+            ChannelFactory<BusinessServerInterface.BusinessServerInterface> channelFactory;
             NetTcpBinding tcp = new NetTcpBinding();
 
-            string URL = "net.tcp://localhost:8100/DataBaseService";
+            string URL = "net.tcp://localhost:8101/BusinessService";
 
-            channelFactory = new ChannelFactory<DataBaseServerInterface.DataBaseServerInterface>(tcp, URL);
+            channelFactory = new ChannelFactory<BusinessServerInterface.BusinessServerInterface>(tcp, URL);
             channel = channelFactory.CreateChannel();
 
 
@@ -78,7 +78,7 @@ namespace DataBaseClient
                 icon.Dispose();
 
             }
-            catch(FaultException<IndexOutOfRangeFault> exception)
+            catch(FaultException<AccountNotFoundFault> exception)
             {
                 MessageBox.Show(exception.Detail.Issue);
             }

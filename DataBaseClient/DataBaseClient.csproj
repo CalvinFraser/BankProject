@@ -97,9 +97,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DataBaseServerInterface\DataBaseServerInterface.csproj">
-      <Project>{db00a9c3-4139-4615-8c1b-e51b1c952011}</Project>
-      <Name>DataBaseServerInterface</Name>
+    <ProjectReference Include="..\BusinessServerInterface\BusinessServerInterface.csproj">
+      <Project>{ead51939-c279-498a-b7db-61c73be0d12c}</Project>
+      <Name>BusinessServerInterface</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
