@@ -48,7 +48,7 @@ namespace BusinessServer
         public void getAccountByLastName(string lastName, out uint acctNo, out uint pin, out int bal, out string fName, out string lName, out Bitmap icon)
         {
             int total = getNumEntires();
-
+            Console.WriteLine("Obtaining data via lastname...");
             uint tmpAcct = 0, tmpPin = 0;
             int tmpBal = 0;
             Bitmap tmpIcon = null;

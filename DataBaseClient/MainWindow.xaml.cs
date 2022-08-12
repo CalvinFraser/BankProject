@@ -47,7 +47,7 @@ namespace DataBaseClient
 
 
             TotalItemsVal.Content = channel.getNumEntires();
-            getData(index);
+            getDataIndex(index);
             indexEntry.Text = "0";
         }
 
@@ -56,7 +56,26 @@ namespace DataBaseClient
 
         }
 
-        private void getData(int index)
+        private void getDataSearch(string searchTerm)
+        {
+            string fName = "", lName = "";
+            int bal = 0;
+            uint acct = 0, pin = 0;
+            Bitmap icon = null;
+
+
+            channel.getAccountByLastName(searchTerm, out acct, out pin, out bal, out fName, out lName, out icon); //RPC STUFF
+            FNameBox.Text = fName;
+            LNameBox.Text = lName;
+            BalBox.Text = bal.ToString("C");
+            AccBox.Text = acct.ToString();
+            PinBox.Text = pin.ToString("D4");
+            //Taken from: https://stackoverflow.com/questions/26260654/wpf-converting-bitmap-to-imagesource
+            PFP.Source = Imaging.CreateBitmapSourceFromHBitmap(icon.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+            icon.Dispose();
+
+        }
+        private void getDataIndex(int index)
         {
             try
             {
@@ -84,13 +103,18 @@ namespace DataBaseClient
             }
         }
 
-        private void HandleClick(object sender, RoutedEventArgs e)
+        private void HandleClickSearch(object sender, RoutedEventArgs e)
+        {
+            string searchTerm = searchEntry.Text;
+            getDataSearch(searchTerm);
+        }
+        private void HandleClickIndex(object sender, RoutedEventArgs e)
         {
             int newIndex = 0; 
             if(int.TryParse(indexEntry.Text, out newIndex) && newIndex != index)
             {
                 index = newIndex;
-                getData(index);
+                getDataIndex(index);
             }
             else
             {

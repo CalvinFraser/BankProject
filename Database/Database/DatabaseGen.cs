@@ -17,7 +17,7 @@ namespace DatabaseLib
     {
         private readonly  Random _random = new Random();        
         private readonly string[] firstNames = { "James", "Katheryn", "Calvin", "Ethan", "Sarah", "Chris" };
-        private readonly string[] lastNames = { "Fraser", "Smith", "Douglas", "Janson", "Wilson", "Anderson" };
+        private readonly string[] lastNames = { "Fraser", "Smith", "Douglas", "Janson", "Wilson", "Anderson", "Brown", "Jones", "Williams", "Garcia", "Miller", "Davis", "Martinez", "Lopez", "Thomas", "Anderson"};
         private readonly List<Bitmap> icons = new List<Bitmap>();
         public DatabaseGen() 
         {

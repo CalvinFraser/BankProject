@@ -34,7 +34,7 @@ namespace DataBaseServer
 
                 throw new FaultException<IndexOutOfRangeFault>(new IndexOutOfRangeFault() { Issue = "Client accessed index out of range" });
             }
-            Console.WriteLine("Obtaining data...");
+            
 
             acctNo = dataBase.GetAcctNoByIndex(index);
             pin = dataBase.GetPINByIndex(index);
