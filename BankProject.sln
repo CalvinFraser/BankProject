@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessServer", "BusinessS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessServerInterface", "BusinessServerInterface\BusinessServerInterface.csproj", "{EAD51939-C279-498A-B7DB-61C73BE0D12C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DatabaseClient_AsyncAwait", "DatabaseClient_AsyncAwait\DatabaseClient_AsyncAwait.csproj", "{AEE3D9FD-5465-4842-B1BF-EFA21FC97287}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{EAD51939-C279-498A-B7DB-61C73BE0D12C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EAD51939-C279-498A-B7DB-61C73BE0D12C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EAD51939-C279-498A-B7DB-61C73BE0D12C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AEE3D9FD-5465-4842-B1BF-EFA21FC97287}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AEE3D9FD-5465-4842-B1BF-EFA21FC97287}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AEE3D9FD-5465-4842-B1BF-EFA21FC97287}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AEE3D9FD-5465-4842-B1BF-EFA21FC97287}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

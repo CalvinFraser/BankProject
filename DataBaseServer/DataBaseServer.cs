@@ -42,8 +42,8 @@ namespace DataBaseServer
             fName = dataBase.GetFirstNameByIndex(index);
             lName = dataBase.GetLastNameByIndex(index);
             icon = new Bitmap(dataBase.getIconByIndex(index));
+            Console.WriteLine("Index of [" + index + "] account number is: " + acctNo);
 
-            
         }
 
         public DataBaseServer() { }

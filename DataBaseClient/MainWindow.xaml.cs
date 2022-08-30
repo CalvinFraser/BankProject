@@ -23,16 +23,25 @@ using System.ServiceModel;
 using BusinessServerInterface;
 using System.Drawing;
 using System.Windows.Interop;
+using System.Runtime.Remoting.Messaging;
+using System.Text.RegularExpressions;
 
 namespace DataBaseClient
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
+    /// 
+    
     public partial class MainWindow : Window
     {
         private BusinessServerInterface.BusinessServerInterface channel;
         private int index = 0;
+
+        private delegate Person Search(String search);
+        private Search search;
+
+        Regex rx = new Regex("[^A-Za-z]");
         public MainWindow()
         {
             InitializeComponent();
@@ -49,6 +58,9 @@ namespace DataBaseClient
             TotalItemsVal.Content = channel.getNumEntires();
             getDataIndex(index);
             indexEntry.Text = "0";
+
+            progress.Value = 0;
+            progress.Visibility = Visibility.Hidden;
         }
 
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -56,7 +68,7 @@ namespace DataBaseClient
 
         }
 
-        private void getDataSearch(string searchTerm)
+        private Person getDataSearch(string searchTerm)
         {
             string fName = "", lName = "";
             int bal = 0;
@@ -64,7 +76,20 @@ namespace DataBaseClient
             Bitmap icon = null;
 
 
-            channel.getAccountByLastName(searchTerm, out acct, out pin, out bal, out fName, out lName, out icon); //RPC STUFF
+            channel.getAccountByLastName(searchTerm, out acct, out pin, out bal, out fName, out lName, out icon, out index); //RPC STUFF
+            Person person = new Person(); 
+
+            person.acctNo = acct;
+            person.icon = icon;
+            person.pin = pin;
+            person.balance = bal;
+            person.firstName = fName;
+            person.lastName = lName;
+
+
+
+            return person; 
+            /*
             FNameBox.Text = fName;
             LNameBox.Text = lName;
             BalBox.Text = bal.ToString("C");
@@ -73,9 +98,10 @@ namespace DataBaseClient
             //Taken from: https://stackoverflow.com/questions/26260654/wpf-converting-bitmap-to-imagesource
             PFP.Source = Imaging.CreateBitmapSourceFromHBitmap(icon.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
             icon.Dispose();
+            */
 
         }
-        private void getDataIndex(int index)
+        private  void getDataIndex(int index)
         {
             try
             {
@@ -85,7 +111,7 @@ namespace DataBaseClient
                 uint acct = 0, pin = 0;
                 Bitmap icon = null;
                
-
+                
                 channel.GetValuesForEntry(index, out acct, out pin, out bal, out fName, out lName, out icon); //RPC STUFF
                 FNameBox.Text = fName;
                 LNameBox.Text = lName;
@@ -105,9 +131,68 @@ namespace DataBaseClient
 
         private void HandleClickSearch(object sender, RoutedEventArgs e)
         {
+
             string searchTerm = searchEntry.Text;
-            getDataSearch(searchTerm);
+
+            if(rx.IsMatch(searchTerm))
+            {
+                MessageBox.Show("Please check your last name search term.");
+                return;
+            }
+            // progress.Visibility = Visibility.Visible;
+            FNameBox.IsReadOnly = true;
+            LNameBox.IsReadOnly = true;
+            BalBox.IsReadOnly = true;
+            AccBox.IsReadOnly = true;
+            PinBox.IsReadOnly = true;
+            indexEntry.IsReadOnly = true;
+            searchEntry.IsReadOnly = true;
+            SearchButton.IsEnabled = false;
+            GoButton.IsEnabled = false;
+
+            
+            search = getDataSearch;
+            AsyncCallback searchCallBack;
+            searchCallBack = OnSearchComplete;
+            IAsyncResult result = search.BeginInvoke(searchTerm, searchCallBack, null);
+  
+
+
         }
+
+        private void OnSearchComplete(IAsyncResult asyncResult)
+        {
+            Person person;
+            Search search = null; 
+            AsyncResult obj = (AsyncResult)asyncResult;
+            if(obj.EndInvokeCalled == false)
+            {
+                search = (Search)obj.AsyncDelegate;
+                person = search.EndInvoke(obj);
+                updateGUI(person);
+            }
+            obj.AsyncWaitHandle.Close();
+
+        }
+        private void updateGUI(Person person)
+        {
+            FNameBox.Dispatcher.Invoke(new Action(() => { FNameBox.Text = person.firstName;FNameBox.IsReadOnly = false;}));
+            LNameBox.Dispatcher.Invoke(new Action(() => { LNameBox.Text = person.lastName; LNameBox.IsReadOnly = false; }));
+            BalBox.Dispatcher.Invoke(new Action(() => { BalBox.Text = person.balance.ToString("C"); BalBox.IsReadOnly = false; }));
+            AccBox.Dispatcher.Invoke(new Action(() => { AccBox.Text = person.acctNo.ToString(); AccBox.IsReadOnly = false; }));
+            PinBox.Dispatcher.Invoke(new Action(()=> { PinBox.Text = person.pin.ToString("D4"); PinBox.IsReadOnly = false; }));
+
+            //Taken from: https://stackoverflow.com/questions/26260654/wpf-converting-bitmap-to-imagesource
+            PFP.Dispatcher.Invoke(new Action( () => PFP.Source = Imaging.CreateBitmapSourceFromHBitmap(person.icon.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions())));
+
+            indexEntry.Dispatcher.Invoke(new Action(() => { indexEntry.IsReadOnly = false; indexEntry.Text = index.ToString(); }));
+            searchEntry.Dispatcher.Invoke(new Action(() => { searchEntry.IsReadOnly = false; }));
+            SearchButton.Dispatcher.Invoke(new Action(() => { SearchButton.IsEnabled = true; }));
+            GoButton.Dispatcher.Invoke(new Action(() => { GoButton.IsEnabled = true; }));
+
+
+        }
+
         private void HandleClickIndex(object sender, RoutedEventArgs e)
         {
             int newIndex = 0; 
@@ -121,6 +206,17 @@ namespace DataBaseClient
 
             }
             
+        }
+
+       private struct Person
+        {
+            public uint acctNo;
+            public uint pin;
+            public int balance;
+            public string firstName;
+            public string lastName;
+            public Bitmap icon;
+
         }
 
     }

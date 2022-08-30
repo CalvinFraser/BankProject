@@ -21,6 +21,6 @@ namespace BusinessServerInterface
         void GetValuesForEntry(int index, out uint acctNo, out uint pin, out int bal, out string fName, out string lName, out Bitmap icon);
 
         [OperationContract]
-        void getAccountByLastName(string lastName, out uint acctNo, out uint pin, out int bal, out string fName, out string lName, out Bitmap icon);
+        void getAccountByLastName(string lastName, out uint acctNo, out uint pin, out int bal, out string fName, out string lName, out Bitmap icon, out int index);
     }
 }
