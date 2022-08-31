@@ -17,7 +17,7 @@ using System.Drawing;
 
 namespace DataBaseServer
 {
-    [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, UseSynchronizationContext = false)]
+    [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, UseSynchronizationContext = false, InstanceContextMode = InstanceContextMode.Single)]
     internal class DataBaseServer : DataBaseServerInterface.DataBaseServerInterface
     {
         private readonly DataBase dataBase = new DataBase();

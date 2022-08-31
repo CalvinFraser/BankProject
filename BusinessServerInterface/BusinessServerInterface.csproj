@@ -46,7 +46,9 @@
   <ItemGroup>
     <Compile Include="AccountNotFoundFault.cs" />
     <Compile Include="BusinessServerInterface.cs" />
+    <Compile Include="DataIntermed.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SearchData.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

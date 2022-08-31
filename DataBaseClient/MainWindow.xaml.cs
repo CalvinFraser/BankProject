@@ -26,6 +26,9 @@ using System.Windows.Interop;
 using System.Runtime.Remoting.Messaging;
 using System.Text.RegularExpressions;
 
+using RestSharp;
+using Newtonsoft.Json;
+
 namespace DataBaseClient
 {
     /// <summary>
@@ -35,187 +38,145 @@ namespace DataBaseClient
     
     public partial class MainWindow : Window
     {
-        private BusinessServerInterface.BusinessServerInterface channel;
         private int index = 0;
-
-        private delegate Person Search(String search);
-        private Search search;
-
+        RestClient RS;
+        SearchData searchData;
+        int totalValues = 0;
+       
         Regex rx = new Regex("[^A-Za-z]");
         public MainWindow()
         {
             InitializeComponent();
+            string URL = "http://localhost:52364/";
+            RS = new RestClient(URL);
+            RestRequest RR = new RestRequest("api/GetTotalValues");
+            RestResponse restResponse = RS.Get(RR);
 
-            ChannelFactory<BusinessServerInterface.BusinessServerInterface> channelFactory;
-            NetTcpBinding tcp = new NetTcpBinding();
+            TotalItemsVal.Content = restResponse.Content;
+            totalValues = int.Parse(TotalItemsVal.Content.ToString());
 
-            string URL = "net.tcp://localhost:8101/BusinessService";
+            DataIntermed data = new DataIntermed();
 
-            channelFactory = new ChannelFactory<BusinessServerInterface.BusinessServerInterface>(tcp, URL);
-            channel = channelFactory.CreateChannel();
+            RR = new RestRequest("api/GetAccount/" + index.ToString());
+            restResponse = RS.Get(RR);
+            data = JsonConvert.DeserializeObject<DataIntermed>(restResponse.Content);
+            FNameBox.Text = data.firstName;
+            LNameBox.Text = data.lastName;
+            BalBox.Text = data.balance.ToString("C");
+            PinBox.Text = data.pin.ToString("D4");
+            AccBox.Text = data.acctNo.ToString();
 
+            indexEntry.Text = index.ToString();
 
-            TotalItemsVal.Content = channel.getNumEntires();
-            getDataIndex(index);
-            indexEntry.Text = "0";
+            searchData = new SearchData();
 
-            progress.Value = 0;
-            progress.Visibility = Visibility.Hidden;
+           // PFP.Source = Imaging.CreateBitmapSourceFromHBitmap(data.icon.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
         }
 
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
 
         }
-
-        private Person getDataSearch(string searchTerm)
+        
+        private async void HandleClickIndex(object sender, EventArgs e)
         {
-            string fName = "", lName = "";
-            int bal = 0;
-            uint acct = 0, pin = 0;
-            Bitmap icon = null;
 
 
-            channel.getAccountByLastName(searchTerm, out acct, out pin, out bal, out fName, out lName, out icon, out index); //RPC STUFF
-            Person person = new Person(); 
-
-            person.acctNo = acct;
-            person.icon = icon;
-            person.pin = pin;
-            person.balance = bal;
-            person.firstName = fName;
-            person.lastName = lName;
-
-
-
-            return person; 
-            /*
-            FNameBox.Text = fName;
-            LNameBox.Text = lName;
-            BalBox.Text = bal.ToString("C");
-            AccBox.Text = acct.ToString();
-            PinBox.Text = pin.ToString("D4");
-            //Taken from: https://stackoverflow.com/questions/26260654/wpf-converting-bitmap-to-imagesource
-            PFP.Source = Imaging.CreateBitmapSourceFromHBitmap(icon.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-            icon.Dispose();
-            */
-
-        }
-        private  void getDataIndex(int index)
-        {
-            try
+            if (int.TryParse(indexEntry.Text, out index))
             {
-               
-                string fName = "", lName = "";
-                int bal = 0;
-                uint acct = 0, pin = 0;
-                Bitmap icon = null;
-               
-                
-                channel.GetValuesForEntry(index, out acct, out pin, out bal, out fName, out lName, out icon); //RPC STUFF
-                FNameBox.Text = fName;
-                LNameBox.Text = lName;
-                BalBox.Text = bal.ToString("C");
-                AccBox.Text = acct.ToString();
-                PinBox.Text = pin.ToString("D4");
-                //Taken from: https://stackoverflow.com/questions/26260654/wpf-converting-bitmap-to-imagesource
-                PFP.Source = Imaging.CreateBitmapSourceFromHBitmap(icon.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-                icon.Dispose();
+                if (index >= 0 && index < totalValues)
+                {
+                    index = int.Parse(indexEntry.Text);
 
-            }
-            catch(FaultException<AccountNotFoundFault> exception)
-            {
-                MessageBox.Show(exception.Detail.Issue);
+
+                    Task<DataIntermed> task = new Task<DataIntermed>(getIndex);
+                    task.Start();
+
+                    GoButton.IsEnabled = false;
+                    SearchButton.IsEnabled = false;
+                    indexEntry.IsReadOnly = true;
+                    searchEntry.IsReadOnly = true;
+
+                    DataIntermed data = await task;
+
+
+
+                    FNameBox.Text = data.firstName;
+                    LNameBox.Text = data.lastName;
+                    BalBox.Text = data.balance.ToString("C");
+                    PinBox.Text = data.pin.ToString("D4");
+                    AccBox.Text = data.acctNo.ToString();
+
+
+                    GoButton.IsEnabled = true;
+                    SearchButton.IsEnabled = true;
+                    indexEntry.IsReadOnly = false;
+                    searchEntry.IsReadOnly = false;
+
+                }
             }
         }
 
-        private void HandleClickSearch(object sender, RoutedEventArgs e)
+        private DataIntermed getIndex()
+        {
+            RestRequest RR = new RestRequest("api/GetAccount/" + index.ToString());
+            RestResponse restResponse = RS.Get(RR);
+
+            return JsonConvert.DeserializeObject<DataIntermed>(restResponse.Content);
+
+        }
+
+        private async void HandleClickSearch(object sender, EventArgs e)
         {
 
             string searchTerm = searchEntry.Text;
-
-            if(rx.IsMatch(searchTerm))
+            if (rx.IsMatch(searchTerm))
             {
-                MessageBox.Show("Please check your last name search term.");
+                MessageBox.Show("Please check your last name search term. ");
                 return;
             }
-            // progress.Visibility = Visibility.Visible;
-            FNameBox.IsReadOnly = true;
-            LNameBox.IsReadOnly = true;
-            BalBox.IsReadOnly = true;
-            AccBox.IsReadOnly = true;
-            PinBox.IsReadOnly = true;
+
+
+            searchData.searchString = searchTerm;
+
+
+
+
+            Task<DataIntermed> task = new Task<DataIntermed>(getSearch);
+            task.Start();
+
+            GoButton.IsEnabled = false;
+            SearchButton.IsEnabled = false;
             indexEntry.IsReadOnly = true;
             searchEntry.IsReadOnly = true;
-            SearchButton.IsEnabled = false;
-            GoButton.IsEnabled = false;
+            DataIntermed data = await task;
 
-            
-            search = getDataSearch;
-            AsyncCallback searchCallBack;
-            searchCallBack = OnSearchComplete;
-            IAsyncResult result = search.BeginInvoke(searchTerm, searchCallBack, null);
-  
+          
 
+            FNameBox.Text = data.firstName;
+            LNameBox.Text = data.lastName;
+            BalBox.Text = data.balance.ToString("C");
+            PinBox.Text = data.pin.ToString("D4");
+            AccBox.Text = data.acctNo.ToString();
 
-        }
-
-        private void OnSearchComplete(IAsyncResult asyncResult)
-        {
-            Person person;
-            Search search = null; 
-            AsyncResult obj = (AsyncResult)asyncResult;
-            if(obj.EndInvokeCalled == false)
-            {
-                search = (Search)obj.AsyncDelegate;
-                person = search.EndInvoke(obj);
-                updateGUI(person);
-            }
-            obj.AsyncWaitHandle.Close();
-
-        }
-        private void updateGUI(Person person)
-        {
-            FNameBox.Dispatcher.Invoke(new Action(() => { FNameBox.Text = person.firstName;FNameBox.IsReadOnly = false;}));
-            LNameBox.Dispatcher.Invoke(new Action(() => { LNameBox.Text = person.lastName; LNameBox.IsReadOnly = false; }));
-            BalBox.Dispatcher.Invoke(new Action(() => { BalBox.Text = person.balance.ToString("C"); BalBox.IsReadOnly = false; }));
-            AccBox.Dispatcher.Invoke(new Action(() => { AccBox.Text = person.acctNo.ToString(); AccBox.IsReadOnly = false; }));
-            PinBox.Dispatcher.Invoke(new Action(()=> { PinBox.Text = person.pin.ToString("D4"); PinBox.IsReadOnly = false; }));
-
-            //Taken from: https://stackoverflow.com/questions/26260654/wpf-converting-bitmap-to-imagesource
-            PFP.Dispatcher.Invoke(new Action( () => PFP.Source = Imaging.CreateBitmapSourceFromHBitmap(person.icon.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions())));
-
-            indexEntry.Dispatcher.Invoke(new Action(() => { indexEntry.IsReadOnly = false; indexEntry.Text = index.ToString(); }));
-            searchEntry.Dispatcher.Invoke(new Action(() => { searchEntry.IsReadOnly = false; }));
-            SearchButton.Dispatcher.Invoke(new Action(() => { SearchButton.IsEnabled = true; }));
-            GoButton.Dispatcher.Invoke(new Action(() => { GoButton.IsEnabled = true; }));
+            GoButton.IsEnabled = true;
+            SearchButton.IsEnabled = true;
+            indexEntry.IsReadOnly = false;
+            searchEntry.IsReadOnly = false;
 
 
         }
 
-        private void HandleClickIndex(object sender, RoutedEventArgs e)
+        private DataIntermed getSearch()
         {
-            int newIndex = 0; 
-            if(int.TryParse(indexEntry.Text, out newIndex) && newIndex != index)
-            {
-                index = newIndex;
-                getDataIndex(index);
-            }
-            else
-            {
+            RestRequest RR = new RestRequest("api/search/");
+            RR.AddJsonBody(JsonConvert.SerializeObject(searchData));
+            RestResponse restResponse = RS.Post(RR);
 
-            }
-            
-        }
+            SearchData SD = JsonConvert.DeserializeObject<SearchData>(restResponse.Content);
 
-       private struct Person
-        {
-            public uint acctNo;
-            public uint pin;
-            public int balance;
-            public string firstName;
-            public string lastName;
-            public Bitmap icon;
+            //return new DataIntermed();
+            return JsonConvert.DeserializeObject<DataIntermed>(restResponse.Content);
 
         }
 
