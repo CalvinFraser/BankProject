@@ -7,6 +7,9 @@ using System.Web.Http;
 using BusinessServerInterface;
 using System.ServiceModel;
 using System.Drawing;
+using Newtonsoft.Json;
+using Utils; 
+
 namespace BusinessWebAPI.Controllers
 {
     public class SearchController : ApiController
@@ -43,6 +46,7 @@ namespace BusinessWebAPI.Controllers
                     data.balance = tmpBal;
                     data.firstName = tmpFName;
                     data.lastName = tmpLName;
+                    data.icon64 = Util.BitMapToBase64(tmpIcon);
 
 
                     return data;

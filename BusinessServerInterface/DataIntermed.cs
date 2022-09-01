@@ -14,5 +14,7 @@ namespace BusinessServerInterface
         public int balance;
         public string firstName;
         public string lastName;
+        public string icon64; 
+       
     }
 }

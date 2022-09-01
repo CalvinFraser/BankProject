@@ -7,7 +7,8 @@ using System.Web.Http;
 using BusinessServerInterface;
 using System.ServiceModel;
 using System.Drawing;
-
+using Newtonsoft.Json;
+using Utils;
 namespace BusinessWebAPI.Controllers
 {
     public class GetAccountController : ApiController
@@ -26,6 +27,9 @@ namespace BusinessWebAPI.Controllers
             DataIntermed data = new DataIntermed();
             Bitmap temp; 
             channel.GetValuesForEntry(id, out data.acctNo, out data.pin, out data.balance, out data.firstName, out data.lastName, out temp);
+
+            string base64 = Util.BitMapToBase64(temp);
+            data.icon64 = base64;
 
             return data; 
         }

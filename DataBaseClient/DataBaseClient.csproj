@@ -136,6 +136,10 @@
       <Project>{ead51939-c279-498a-b7db-61c73be0d12c}</Project>
       <Name>BusinessServerInterface</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Utils\Utils.csproj">
+      <Project>{d9809933-b043-470b-a5ee-a6961ddc3030}</Project>
+      <Name>Utils</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -28,6 +28,7 @@ using System.Text.RegularExpressions;
 
 using RestSharp;
 using Newtonsoft.Json;
+using Utils; 
 
 namespace DataBaseClient
 {
@@ -70,7 +71,10 @@ namespace DataBaseClient
 
             searchData = new SearchData();
 
-           // PFP.Source = Imaging.CreateBitmapSourceFromHBitmap(data.icon.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+            Bitmap bmp = Util.Base64StringToBitmap(data.icon64);
+            
+
+            PFP.Source = Imaging.CreateBitmapSourceFromHBitmap(bmp.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
         }
 
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -107,6 +111,11 @@ namespace DataBaseClient
                     PinBox.Text = data.pin.ToString("D4");
                     AccBox.Text = data.acctNo.ToString();
 
+                    Bitmap bmp = Util.Base64StringToBitmap(data.icon64);
+
+
+                    PFP.Source = Imaging.CreateBitmapSourceFromHBitmap(bmp.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+
 
                     GoButton.IsEnabled = true;
                     SearchButton.IsEnabled = true;
@@ -119,10 +128,12 @@ namespace DataBaseClient
 
         private DataIntermed getIndex()
         {
-            RestRequest RR = new RestRequest("api/GetAccount/" + index.ToString());
-            RestResponse restResponse = RS.Get(RR);
+ 
+                RestRequest RR = new RestRequest("api/GetAccount/" + index.ToString());
+                RestResponse restResponse = RS.Get(RR);
 
-            return JsonConvert.DeserializeObject<DataIntermed>(restResponse.Content);
+                return JsonConvert.DeserializeObject<DataIntermed>(restResponse.Content);
+    
 
         }
 
@@ -159,6 +170,11 @@ namespace DataBaseClient
             PinBox.Text = data.pin.ToString("D4");
             AccBox.Text = data.acctNo.ToString();
 
+            Bitmap bmp = Util.Base64StringToBitmap(data.icon64);
+
+
+            PFP.Source = Imaging.CreateBitmapSourceFromHBitmap(bmp.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+
             GoButton.IsEnabled = true;
             SearchButton.IsEnabled = true;
             indexEntry.IsReadOnly = false;
@@ -169,6 +185,7 @@ namespace DataBaseClient
 
         private DataIntermed getSearch()
         {
+            
             RestRequest RR = new RestRequest("api/search/");
             RR.AddJsonBody(JsonConvert.SerializeObject(searchData));
             RestResponse restResponse = RS.Post(RR);
