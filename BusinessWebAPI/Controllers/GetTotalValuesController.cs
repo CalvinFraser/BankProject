@@ -2,29 +2,34 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Web.Http;
-using System.ServiceModel;
+
+using RestSharp;
+
 namespace BusinessWebAPI.Controllers
 {
     public class GetTotalValuesController : ApiController
     {
-        NetTcpBinding tcp;
-        private DataBaseServerInterface.DataBaseServerInterface channel;
-        ChannelFactory<DataBaseServerInterface.DataBaseServerInterface> channelFactory;
+
 
 
 
 
         // GET api/GetTotalValues
-        public int Get()
+        public IHttpActionResult Get()
         {
-            tcp = new NetTcpBinding();
-            string URL = "net.tcp://localhost:8100/DataBaseService";
-            channelFactory = new ChannelFactory<DataBaseServerInterface.DataBaseServerInterface>(tcp, URL);
-            channel = channelFactory.CreateChannel();
 
-            return channel.getNumEntires();
+            
+            RestClient RC = new RestClient("http://localhost:9089/");
+            RestRequest RR = new RestRequest("api/TotalDataValues");
+            RestResponse restResponse = RC.Get(RR);
+            int values; 
+            if(int.TryParse(restResponse.Content, out values))
+            {
+                return Ok(values);
+            }
+            return InternalServerError();
+            
         }
 
     }

@@ -8,54 +8,49 @@ using BusinessServerInterface;
 using System.ServiceModel;
 using System.Drawing;
 using Newtonsoft.Json;
+using RestSharp;
 using Utils; 
 
 namespace BusinessWebAPI.Controllers
 {
     public class SearchController : ApiController
     {
-        NetTcpBinding tcp;
-        private DataBaseServerInterface.DataBaseServerInterface channel;
-        ChannelFactory<DataBaseServerInterface.DataBaseServerInterface> channelFactory;
 
   
 
         
-        public DataIntermed Post([FromBody] SearchData name)
+        public IHttpActionResult Post([FromBody] SearchData name)
         {
-           
-            tcp = new NetTcpBinding();
-            string URL = "net.tcp://localhost:8100/DataBaseService";
-            channelFactory = new ChannelFactory<DataBaseServerInterface.DataBaseServerInterface>(tcp, URL);
-            channel = channelFactory.CreateChannel();
 
-            DataIntermed data = new DataIntermed();
-            int total = channel.getNumEntires();
-            uint tmpAcct = 0, tmpPin = 0;
-            int tmpBal = 0;
-            Bitmap tmpIcon;
-            string tmpFName = "temp", tmpLName = "temp";
+            RestClient RC = new RestClient("http://localhost:9089/");
+            RestRequest restRequest = new RestRequest("api/TotalDataValues");
+            RestResponse RR = RC.Get(restRequest);
+            DataIntermed DT;
+            int totalVals = int.Parse(RR.Content);
 
-            for (int index_ = 0; index_ < total; index_++)
+            for(int i = 0; i < totalVals; i++)
             {
-                channel.GetValuesForEntry(index_, out tmpAcct, out tmpPin, out tmpBal, out tmpFName, out tmpLName, out tmpIcon);
-                if (String.Equals(name.searchString, tmpLName, StringComparison.OrdinalIgnoreCase))
+                restRequest = new RestRequest("api/GetAccount/" + i);
+                try
                 {
-                    data.acctNo = tmpAcct;
-                    data.pin = tmpPin;
-                    data.balance = tmpBal;
-                    data.firstName = tmpFName;
-                    data.lastName = tmpLName;
-                    data.icon64 = Util.BitMapToBase64(tmpIcon);
+                    RR = RC.Get(restRequest);
 
-
-                    return data;
+                    DT = JsonConvert.DeserializeObject<DataIntermed>(RR.Content);
+                    if (String.Equals(DT.lastName, name.searchString, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return Ok(DT);
+                    }
+                }catch(System.Net.Http.HttpRequestException e)
+                {
+                    return BadRequest(e.Message);
                 }
-               
+                catch(Exception e)
+                {
+                    return InternalServerError();
+                }
             }
-         
-            return data;
 
+            return NotFound();
         }
         
 
