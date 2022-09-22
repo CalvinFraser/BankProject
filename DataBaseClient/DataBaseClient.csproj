@@ -136,6 +136,10 @@
       <Project>{ead51939-c279-498a-b7db-61c73be0d12c}</Project>
       <Name>BusinessServerInterface</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DatatierWeb\DatatierWeb.csproj">
+      <Project>{e93d8cc0-e15d-440b-b25f-252ad031d364}</Project>
+      <Name>DatatierWeb</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Utils\Utils.csproj">
       <Project>{d9809933-b043-470b-a5ee-a6961ddc3030}</Project>
       <Name>Utils</Name>

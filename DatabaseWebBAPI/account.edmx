@@ -1,0 +1,85 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="AccountsdbModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Accounts">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="accountNo" Type="int" Nullable="false" />
+          <Property Name="balance" Type="int" Nullable="false" />
+          <Property Name="pin" Type="int" Nullable="false" />
+          <Property Name="firstName" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="lastName" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="icon64" Type="varchar(max)" />
+        </EntityType>
+        <EntityContainer Name="AccountsdbModelStoreContainer">
+          <EntitySet Name="Accounts" EntityType="Self.Accounts" Schema="dbo" store:Type="Tables" />
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="AccountsdbModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Account">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="accountNo" Type="Int32" Nullable="false" />
+          <Property Name="balance" Type="Int32" Nullable="false" />
+          <Property Name="pin" Type="Int32" Nullable="false" />
+          <Property Name="firstName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="lastName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="icon64" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityContainer Name="AccountsdbEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Accounts" EntityType="Self.Account" />
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="AccountsdbModelStoreContainer" CdmEntityContainer="AccountsdbEntities">
+          <EntitySetMapping Name="Accounts">
+            <EntityTypeMapping TypeName="AccountsdbModel.Account">
+              <MappingFragment StoreEntitySet="Accounts">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="accountNo" ColumnName="accountNo" />
+                <ScalarProperty Name="balance" ColumnName="balance" />
+                <ScalarProperty Name="pin" ColumnName="pin" />
+                <ScalarProperty Name="firstName" ColumnName="firstName" />
+                <ScalarProperty Name="lastName" ColumnName="lastName" />
+                <ScalarProperty Name="icon64" ColumnName="icon64" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

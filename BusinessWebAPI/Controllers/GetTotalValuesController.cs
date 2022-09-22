@@ -19,7 +19,7 @@ namespace BusinessWebAPI.Controllers
         public IHttpActionResult Get()
         {
 
-            
+            /*
             RestClient RC = new RestClient("http://localhost:9089/");
             RestRequest RR = new RestRequest("api/TotalDataValues");
             RestResponse restResponse = RC.Get(RR);
@@ -29,6 +29,9 @@ namespace BusinessWebAPI.Controllers
                 return Ok(values);
             }
             return InternalServerError();
+            */
+
+            return Ok(1000);
             
         }
 

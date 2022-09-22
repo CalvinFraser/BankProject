@@ -9,7 +9,7 @@ using System.ServiceModel;
 using System.Drawing;
 using Newtonsoft.Json;
 using RestSharp;
-using Utils; 
+using DatatierWeb.Models;
 
 namespace BusinessWebAPI.Controllers
 {
@@ -22,33 +22,38 @@ namespace BusinessWebAPI.Controllers
         public IHttpActionResult Post([FromBody] SearchData name)
         {
 
-            RestClient RC = new RestClient("http://localhost:9089/");
-            RestRequest restRequest = new RestRequest("api/TotalDataValues");
-            RestResponse RR = RC.Get(restRequest);
-            DataIntermed DT;
-            int totalVals = int.Parse(RR.Content);
+            RestClient RC = new RestClient("http://localhost:62331/");
+            RestRequest restRequest;
+            RestResponse RR;
+            Account DT;
+            int i = 0;
 
-            for(int i = 0; i < totalVals; i++)
+            do
             {
-                restRequest = new RestRequest("api/GetAccount/" + i);
+                restRequest = new RestRequest("api/accounts/" + i);
                 try
                 {
                     RR = RC.Get(restRequest);
 
-                    DT = JsonConvert.DeserializeObject<DataIntermed>(RR.Content);
-                    if (String.Equals(DT.lastName, name.searchString, StringComparison.OrdinalIgnoreCase))
+                    if (RR.StatusCode == HttpStatusCode.OK)
                     {
-                        return Ok(DT);
+                        DT = JsonConvert.DeserializeObject<Account>(RR.Content);
+                        if (String.Equals(DT.lastName, name.searchString, StringComparison.OrdinalIgnoreCase))
+                        {
+                            return Ok(DT);
+                        }
                     }
-                }catch(System.Net.Http.HttpRequestException e)
+                } catch (System.Net.Http.HttpRequestException e)
                 {
                     return BadRequest(e.Message);
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     return InternalServerError();
                 }
-            }
+
+                i++;
+            } while (RR.StatusCode != HttpStatusCode.NotFound);
 
             return NotFound();
         }
